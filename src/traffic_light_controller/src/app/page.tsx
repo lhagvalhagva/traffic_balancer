@@ -6,7 +6,6 @@ import dynamic from 'next/dynamic';
 import CongestionStatus from '@/components/CongestionStatus';
 import TrafficLight from '@/components/TrafficLight';
 
-// Map компонентийг серверийн талд рендэрлэхгүй байхаар динамикаар импортлох
 const MapComponent = dynamic(
   () => import('@/components/Map'),
   { ssr: false }

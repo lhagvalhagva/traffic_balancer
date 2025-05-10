@@ -93,16 +93,14 @@ def main():
             args=(args.controller_port,)
         )
         
-        # Thread-уудыг эхлүүлэх
         counter_thread.start()
-        time.sleep(2)  # Тоологч эхэлсний дараа шинжээчийг эхлүүлэх
+        time.sleep(2) 
         
         analyzer_thread.start()
-        time.sleep(2)  # API эхэлсний дараа удирдлагыг эхлүүлэх
+        time.sleep(2) 
         
         controller_thread.start()
         
-        # Үндсэн thread-д хянах
         while True:
             time.sleep(1)
             if not counter_thread.is_alive() and not analyzer_thread.is_alive() and not controller_thread.is_alive():

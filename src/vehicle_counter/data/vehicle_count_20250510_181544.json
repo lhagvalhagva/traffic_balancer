@@ -1,0 +1,322 @@
+{
+    "start_time": "2025-05-10 18:13:18",
+    "location": "video.mp4",
+    "counts": [
+        {
+            "timestamp": "2025-05-10 18:13:28",
+            "elapsed_time": 9.1717209815979,
+            "frame": 34,
+            "vehicle_id": "1",
+            "total_count": 1
+        },
+        {
+            "timestamp": "2025-05-10 18:13:28",
+            "elapsed_time": 9.820403814315796,
+            "frame": 36,
+            "vehicle_id": "2",
+            "total_count": 2
+        },
+        {
+            "timestamp": "2025-05-10 18:13:40",
+            "elapsed_time": 21.31984782218933,
+            "frame": 72,
+            "vehicle_id": "3",
+            "total_count": 3
+        },
+        {
+            "timestamp": "2025-05-10 18:13:53",
+            "elapsed_time": 34.39546871185303,
+            "frame": 108,
+            "vehicle_id": "6",
+            "total_count": 5
+        },
+        {
+            "timestamp": "2025-05-10 18:13:53",
+            "elapsed_time": 34.39546871185303,
+            "frame": 108,
+            "vehicle_id": "9",
+            "total_count": 5
+        },
+        {
+            "timestamp": "2025-05-10 18:14:42",
+            "elapsed_time": 84.00972700119019,
+            "frame": 214,
+            "vehicle_id": "25",
+            "total_count": 6
+        },
+        {
+            "timestamp": "2025-05-10 18:14:49",
+            "elapsed_time": 90.6781177520752,
+            "frame": 226,
+            "vehicle_id": "32",
+            "total_count": 7
+        },
+        {
+            "timestamp": "2025-05-10 18:14:50",
+            "elapsed_time": 91.49789190292358,
+            "frame": 228,
+            "vehicle_id": "23",
+            "total_count": 8
+        },
+        {
+            "timestamp": "2025-05-10 18:15:06",
+            "elapsed_time": 107.82736492156982,
+            "frame": 256,
+            "vehicle_id": "29",
+            "total_count": 9
+        },
+        {
+            "timestamp": "2025-05-10 18:15:17",
+            "elapsed_time": 118.93344378471375,
+            "frame": 280,
+            "vehicle_id": "36",
+            "total_count": 10
+        },
+        {
+            "timestamp": "2025-05-10 18:15:21",
+            "elapsed_time": 123.06842184066772,
+            "frame": 288,
+            "vehicle_id": "41",
+            "total_count": 11
+        }
+    ],
+    "total_count": 11,
+    "congestion_data": [
+        {
+            "congestion_level": "low",
+            "vehicles_per_minute": 0.0,
+            "vehicles_in_roi": 0,
+            "static_vehicles": 0,
+            "max_static_duration": 0,
+            "timestamp": "2025-05-10 18:13:23",
+            "location": "\u0423\u0443\u043b\u0437\u0432\u0430\u0440 1"
+        },
+        {
+            "congestion_level": "low",
+            "vehicles_per_minute": 11.293382231875322,
+            "vehicles_in_roi": 2,
+            "static_vehicles": 0,
+            "max_static_duration": 0,
+            "timestamp": "2025-05-10 18:13:29",
+            "location": "\u0423\u0443\u043b\u0437\u0432\u0430\u0440 1"
+        },
+        {
+            "congestion_level": "low",
+            "vehicles_per_minute": 7.579965414321078,
+            "vehicles_in_roi": 2,
+            "static_vehicles": 0,
+            "max_static_duration": 0,
+            "timestamp": "2025-05-10 18:13:34",
+            "location": "\u0423\u0443\u043b\u0437\u0432\u0430\u0440 1"
+        },
+        {
+            "congestion_level": "low",
+            "vehicles_per_minute": 8.442820381570332,
+            "vehicles_in_roi": 1,
+            "static_vehicles": 0,
+            "max_static_duration": 0,
+            "timestamp": "2025-05-10 18:13:40",
+            "location": "\u0423\u0443\u043b\u0437\u0432\u0430\u0440 1"
+        },
+        {
+            "congestion_level": "low",
+            "vehicles_per_minute": 6.66813117273232,
+            "vehicles_in_roi": 1,
+            "static_vehicles": 0,
+            "max_static_duration": 0,
+            "timestamp": "2025-05-10 18:13:45",
+            "location": "\u0423\u0443\u043b\u0437\u0432\u0430\u0440 1"
+        },
+        {
+            "congestion_level": "low",
+            "vehicles_per_minute": 5.567927199340541,
+            "vehicles_in_roi": 0,
+            "static_vehicles": 0,
+            "max_static_duration": 0,
+            "timestamp": "2025-05-10 18:13:51",
+            "location": "\u0423\u0443\u043b\u0437\u0432\u0430\u0440 1"
+        },
+        {
+            "congestion_level": "low",
+            "vehicles_per_minute": 7.89670522716152,
+            "vehicles_in_roi": 2,
+            "static_vehicles": 0,
+            "max_static_duration": 0,
+            "timestamp": "2025-05-10 18:13:56",
+            "location": "\u0423\u0443\u043b\u0437\u0432\u0430\u0440 1"
+        },
+        {
+            "congestion_level": "low",
+            "vehicles_per_minute": 6.899830512371573,
+            "vehicles_in_roi": 2,
+            "static_vehicles": 0,
+            "max_static_duration": 0,
+            "timestamp": "2025-05-10 18:14:02",
+            "location": "\u0423\u0443\u043b\u0437\u0432\u0430\u0440 1"
+        },
+        {
+            "congestion_level": "low",
+            "vehicles_per_minute": 6.130306278684308,
+            "vehicles_in_roi": 2,
+            "static_vehicles": 0,
+            "max_static_duration": 0,
+            "timestamp": "2025-05-10 18:14:07",
+            "location": "\u0423\u0443\u043b\u0437\u0432\u0430\u0440 1"
+        },
+        {
+            "congestion_level": "low",
+            "vehicles_per_minute": 5.548041247539084,
+            "vehicles_in_roi": 0,
+            "static_vehicles": 0,
+            "max_static_duration": 0,
+            "timestamp": "2025-05-10 18:14:12",
+            "location": "\u0423\u0443\u043b\u0437\u0432\u0430\u0440 1"
+        },
+        {
+            "congestion_level": "low",
+            "vehicles_per_minute": 5.061481134732714,
+            "vehicles_in_roi": 0,
+            "static_vehicles": 0,
+            "max_static_duration": 0,
+            "timestamp": "2025-05-10 18:14:18",
+            "location": "\u0423\u0443\u043b\u0437\u0432\u0430\u0440 1"
+        },
+        {
+            "congestion_level": "low",
+            "vehicles_per_minute": 4.633091885687218,
+            "vehicles_in_roi": 0,
+            "static_vehicles": 0,
+            "max_static_duration": 0,
+            "timestamp": "2025-05-10 18:14:23",
+            "location": "\u0423\u0443\u043b\u0437\u0432\u0430\u0440 1"
+        },
+        {
+            "congestion_level": "low",
+            "vehicles_per_minute": 4.263223050676077,
+            "vehicles_in_roi": 0,
+            "static_vehicles": 0,
+            "max_static_duration": 0,
+            "timestamp": "2025-05-10 18:14:29",
+            "location": "\u0423\u0443\u043b\u0437\u0432\u0430\u0440 1"
+        },
+        {
+            "congestion_level": "low",
+            "vehicles_per_minute": 3.9437686555775713,
+            "vehicles_in_roi": 0,
+            "static_vehicles": 0,
+            "max_static_duration": 0,
+            "timestamp": "2025-05-10 18:14:34",
+            "location": "\u0423\u0443\u043b\u0437\u0432\u0430\u0440 1"
+        },
+        {
+            "congestion_level": "low",
+            "vehicles_per_minute": 3.653715247808647,
+            "vehicles_in_roi": 0,
+            "static_vehicles": 0,
+            "max_static_duration": 0,
+            "timestamp": "2025-05-10 18:14:40",
+            "location": "\u0423\u0443\u043b\u0437\u0432\u0430\u0440 1"
+        },
+        {
+            "congestion_level": "low",
+            "vehicles_per_minute": 4.119465835805334,
+            "vehicles_in_roi": 1,
+            "static_vehicles": 0,
+            "max_static_duration": 0,
+            "timestamp": "2025-05-10 18:14:46",
+            "location": "\u0423\u0443\u043b\u0437\u0432\u0430\u0440 1"
+        },
+        {
+            "congestion_level": "low",
+            "vehicles_per_minute": 5.192420959088857,
+            "vehicles_in_roi": 3,
+            "static_vehicles": 0,
+            "max_static_duration": 0,
+            "timestamp": "2025-05-10 18:14:51",
+            "location": "\u0423\u0443\u043b\u0437\u0432\u0430\u0440 1"
+        },
+        {
+            "congestion_level": "low",
+            "vehicles_per_minute": 4.875783882167603,
+            "vehicles_in_roi": 3,
+            "static_vehicles": 0,
+            "max_static_duration": 0,
+            "timestamp": "2025-05-10 18:14:57",
+            "location": "\u0423\u0443\u043b\u0437\u0432\u0430\u0440 1"
+        },
+        {
+            "congestion_level": "low",
+            "vehicles_per_minute": 4.636962773301593,
+            "vehicles_in_roi": 2,
+            "static_vehicles": 0,
+            "max_static_duration": 0,
+            "timestamp": "2025-05-10 18:15:02",
+            "location": "\u0423\u0443\u043b\u0437\u0432\u0430\u0440 1"
+        },
+        {
+            "congestion_level": "low",
+            "vehicles_per_minute": 4.964236127640093,
+            "vehicles_in_roi": 3,
+            "static_vehicles": 0,
+            "max_static_duration": 0,
+            "timestamp": "2025-05-10 18:15:07",
+            "location": "\u0423\u0443\u043b\u0437\u0432\u0430\u0440 1"
+        },
+        {
+            "congestion_level": "low",
+            "vehicles_per_minute": 4.728332522607656,
+            "vehicles_in_roi": 2,
+            "static_vehicles": 0,
+            "max_static_duration": 0,
+            "timestamp": "2025-05-10 18:15:13",
+            "location": "\u0423\u0443\u043b\u0437\u0432\u0430\u0440 1"
+        },
+        {
+            "congestion_level": "low",
+            "vehicles_per_minute": 5.000997116294725,
+            "vehicles_in_roi": 2,
+            "static_vehicles": 0,
+            "max_static_duration": 0,
+            "timestamp": "2025-05-10 18:15:18",
+            "location": "\u0423\u0443\u043b\u0437\u0432\u0430\u0440 1"
+        },
+        {
+            "congestion_level": "low",
+            "vehicles_per_minute": 5.251100428651533,
+            "vehicles_in_roi": 2,
+            "static_vehicles": 0,
+            "max_static_duration": 0,
+            "timestamp": "2025-05-10 18:15:24",
+            "location": "\u0423\u0443\u043b\u0437\u0432\u0430\u0440 1"
+        },
+        {
+            "congestion_level": "low",
+            "vehicles_per_minute": 5.025719160513015,
+            "vehicles_in_roi": 2,
+            "static_vehicles": 0,
+            "max_static_duration": 0,
+            "timestamp": "2025-05-10 18:15:30",
+            "location": "\u0423\u0443\u043b\u0437\u0432\u0430\u0440 1"
+        },
+        {
+            "congestion_level": "low",
+            "vehicles_per_minute": 4.8256055807711915,
+            "vehicles_in_roi": 1,
+            "static_vehicles": 0,
+            "max_static_duration": 0,
+            "timestamp": "2025-05-10 18:15:35",
+            "location": "\u0423\u0443\u043b\u0437\u0432\u0430\u0440 1"
+        },
+        {
+            "congestion_level": "low",
+            "vehicles_per_minute": 4.638417250364001,
+            "vehicles_in_roi": 0,
+            "static_vehicles": 0,
+            "max_static_duration": 0,
+            "timestamp": "2025-05-10 18:15:41",
+            "location": "\u0423\u0443\u043b\u0437\u0432\u0430\u0440 1"
+        }
+    ],
+    "end_time": "2025-05-10 18:15:44",
+    "duration": 146.10990476608276
+}

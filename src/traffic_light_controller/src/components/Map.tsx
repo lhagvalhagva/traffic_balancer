@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { TrafficLight as TrafficLightType } from '@/lib/socketio';
 
-// Leaflet динамикаар import хийх - server side рендеринг үед алдаа гаргахгүйн тулд
 const MapContainer = dynamic(
   () => import('react-leaflet').then((mod) => mod.MapContainer),
   { ssr: false }

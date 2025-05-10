@@ -1,6 +1,7 @@
-from .main import VehicleCounterService
-from .detector import VehicleDetector
-from .counter import VehicleCounter
-from .api import app as api_app
+from .vehicle_detector import VehicleDetector
+from .zone_manager import Zone, ZoneManager
+from .vehicle_tracker import VehicleTracker
+from .zone_setup import ZoneSetupUI
+from .vehicle_counter_service import VehicleCounterService
 
-__all__ = ['VehicleCounterService', 'VehicleDetector', 'VehicleCounter', 'api_app']
+__version__ = "1.0.0" 

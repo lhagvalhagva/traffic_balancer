@@ -37,7 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="flex flex-1 overflow-hidden relative">
             {!isLoginPage && (
               <div
-                className={`fixed top-0 left-0 h-full bg-[#2B78E4] p-4 z-40 transition-transform duration-300 shadow-lg md:relative md:translate-x-0 md:w-48`}
+                className={`fixed top-0 left-0 h-full bg-[#2B78E4] z-40 transition-transform duration-300 shadow-lg md:relative md:translate-x-0 md:w-30`}
               >
                 <SidebarMenu />
               </div>

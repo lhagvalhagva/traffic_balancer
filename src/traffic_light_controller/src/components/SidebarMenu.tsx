@@ -35,11 +35,7 @@ export default function SidebarMenu() {
                     <div
                         key={index}
                         onClick={() => router.push(item.path)}
-                        className={`w-full flex items-center justify-center cursor-pointer hover:bg-white hover:text-[#2B78E4] relative ${
-                            isSelected
-                                ? "bg-white text-[#2B78E4] font-semibold"
-                                : "text-white"
-                        }`}
+                        className={`w-full flex items-center justify-center cursor-pointer relative text-white border-b border-white`}
                         style={{
                             height: `${menuItemHeight}px`,
                             minHeight: '80px'

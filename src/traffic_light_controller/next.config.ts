@@ -2,7 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
-    serverActions: true,
+    serverActions: {
+      allowedOrigins: ['localhost:3000'],
+    },
     serverComponentsExternalPackages: ['mqtt'],
   },
   // MQTT ашиглаж буй роутуудыг node runtime дээр ажиллуулах
@@ -22,7 +24,11 @@ const nextConfig = {
   },
   serverRuntimeConfig: {
     PROJECT_ROOT: __dirname,
-  }
+  },
+  serverExternalPackages: ['leaflet'],
+  images: {
+    domains: ['localhost'],
+  },
 };
 
 export default nextConfig;

@@ -6,14 +6,13 @@ import UserMenu from '@/components/UserMenu';
 
 type HeaderProps = {
   isConnected: boolean;
-  onToggleSidebar?: () => void; // Optional function to toggle sidebar
 };
 
-export default function Header({ isConnected, onToggleSidebar }: HeaderProps) {
+export default function Header({ isConnected }: HeaderProps) {
   return (
-    <header className="bg-blue-700 text-white shadow-md">
+    <header className="bg-[#2B78E4] text-white shadow-lg">
       {/* New Row for Status and Navigation */}
-      <div className="bg-white text-blue-700 p-4 flex justify-between items-center">
+      <div className="bg-white text-[#2B78E4] p-4 flex justify-between items-center">
         {/* Status message */}
         <div className="text-sm">
           {isConnected ? "Серверт холбогдсон" : "Серверт холбогдоогүй..."}
@@ -23,19 +22,19 @@ export default function Header({ isConnected, onToggleSidebar }: HeaderProps) {
         <nav className="flex space-x-6 items-center">
           <a
             href="/help"
-            className="text-blue-700 font-bold hover:text-blue-500"
+            className="text-[#2B78E4] font-bold hover:text-blue-500"
           >
             Тусламж
           </a>
           <a
             href="/contact"
-            className="text-blue-700 font-bold hover:text-blue-500"
+            className="text-[#2B78E4] font-bold hover:text-blue-500"
           >
             Холбоо барих
           </a>
           <a
             href="/feedback"
-            className="text-blue-700 font-bold hover:text-blue-500"
+            className="text-[#2B78E4] font-bold hover:text-blue-500"
           >
             Санал сэтгэгдэл
           </a>
@@ -47,20 +46,16 @@ export default function Header({ isConnected, onToggleSidebar }: HeaderProps) {
               alt="Information Icon"
               width={20}
               height={20}
-              className="text-blue-700"
+              className="text-[#2B78E4]"
             />
           </div>
         </nav>
       </div>
 
       {/* Main Header Content */}
-      {/* Main Header Content */}
       <div className="flex items-center justify-between p-4">
-        {/* Left group: Menu + Logo + Description */}
+        {/* Left group: Logo + Description */}
         <div className="flex items-center space-x-4">
-          <button onClick={onToggleSidebar}>
-            <Image src="/images/menu.svg" alt="Menu Icon" width={24} height={24} />
-          </button>
           <div className="flex ">
             <span className="text-2xl font-bold pr-4">traff8x</span>
             <span className="text-sm text-blue-200 leading-tight">
@@ -72,7 +67,7 @@ export default function Header({ isConnected, onToggleSidebar }: HeaderProps) {
 
         {/* Right group: User button + Icons */}
         <div className="flex items-center space-x-4">
-          <button className="text-sm text-white bg-blue-600 hover:bg-blue-500 p-2 rounded-lg">
+          <button className="text-sm text-white bg-[#2B78E4] hover:bg-blue-500 p-2 rounded-lg">
             ЭТИ 64007: Уран Нямбаатар
           </button>
           <div className="flex space-x-2">

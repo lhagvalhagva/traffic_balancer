@@ -1,0 +1,30 @@
+{
+  "frame": 650,
+  "timestamp": 1746936233.1193855,
+  "datetime": "2025-05-11 12:03:53",
+  "zones": [
+    {
+      "id": 1,
+      "name": "Zone 1",
+      "type": "COUNT",
+      "count": 12,
+      "vehicles": [],
+      "is_stalled": false,
+      "traffic_lights": [
+        "West_Straight",
+        "South_Straight"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Zone 2",
+      "type": "SUM",
+      "count": 0,
+      "vehicles": [],
+      "is_stalled": false,
+      "traffic_lights": [
+        "West_Straight"
+      ]
+    }
+  ]
+}

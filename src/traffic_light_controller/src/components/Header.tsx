@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import UserMenu from '@/components/UserMenu';
+
 
 type HeaderProps = {
   isConnected: boolean;
@@ -67,7 +69,7 @@ export default function Header({ isConnected }: HeaderProps) {
           <div className="flex ">
             <span className="text-2xl font-bold pr-4">traff8x</span>
             <span className="text-sm text-blue-200 leading-tight">
-              Авто замын хөдлөлгөөний <br />
+              Авто замын хөдөлгөөний <br />
               нэгдсэн хяналтын систем
             </span>
           </div>
@@ -95,14 +97,8 @@ export default function Header({ isConnected }: HeaderProps) {
                 height={24}
               />
             </button>
-            <button className="p-2 text-white bg-transparent border border-white rounded-full">
-              <Image
-                src="/images/user.png"
-                alt="User Icon"
-                width={24}
-                height={24}
-              />
-            </button>
+            <UserMenu />
+
           </div>
         </div>
       </div>

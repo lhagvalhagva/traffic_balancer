@@ -10,7 +10,7 @@ def main():
     # Аргументууд зохицуулах
     parser = argparse.ArgumentParser(description="Тээврийн хэрэгсэл тоолох систем")
     
-    parser.add_argument("--video", "-v", type=str, default="video2.mp4",
+    parser.add_argument("--video", "-v", type=str, default="viiddeo.mov",
                         help="Видео файлын зам (заагаагүй бол камер ашиглана)")
     
     parser.add_argument("--model", "-m", type=str, default="yolov8s.pt",

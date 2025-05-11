@@ -6,9 +6,10 @@ import UserMenu from '@/components/UserMenu';
 
 type HeaderProps = {
   isConnected: boolean;
+  onToggleSidebar?: () => void; // Optional function to toggle sidebar
 };
 
-export default function Header({ isConnected }: HeaderProps) {
+export default function Header({ isConnected, onToggleSidebar }: HeaderProps) {
   return (
     <header className="bg-blue-700 text-white shadow-md">
       {/* New Row for Status and Navigation */}
@@ -57,15 +58,9 @@ export default function Header({ isConnected }: HeaderProps) {
       <div className="flex items-center justify-between p-4">
         {/* Left group: Menu + Logo + Description */}
         <div className="flex items-center space-x-4">
-          <div className="ml-4 pr-2">
-            <Image
-              src="/images/menu.svg"
-              alt="Menu Icon"
-              width={24}
-              height={24}
-              className="text-blue-700 cursor-pointer"
-            />
-          </div>
+          <button onClick={onToggleSidebar}>
+            <Image src="/images/menu.svg" alt="Menu Icon" width={24} height={24} />
+          </button>
           <div className="flex ">
             <span className="text-2xl font-bold pr-4">traff8x</span>
             <span className="text-sm text-blue-200 leading-tight">

@@ -20,8 +20,8 @@ class VehicleDetector:
         self.model = YOLO(model_path)
         self.device = device
         
-        # Types of vehicles that can be detected
-        self.vehicle_classes = [2, 3, 5, 7, 1]  # car, motorcycle, bus, truck, person
+        
+        self.vehicle_classes = [2, 3, 5, 7, 1]  
         self.vehicle_class_names = ['car', 'bus', 'truck', 'motorcycle', 'bicycle', 'person']
         
     def detect_vehicles(self, frame):
@@ -39,18 +39,18 @@ class VehicleDetector:
         """
         results = self.model(frame)[0]
         
-        # Create empty lists
+        
         boxes = []
         scores = []
         class_ids = []
         
-        # Filter detected objects
+        
         for r in results.boxes.data.tolist():
             x1, y1, x2, y2, confidence, class_id = r
             class_id = int(class_id)
             
-            # Only vehicle classes
-            # Or other objects of interest (people, bicycles, etc.)
+            
+            
             if class_id in self.vehicle_classes or self.model.names[class_id] in self.vehicle_class_names:
                 boxes.append([int(x1), int(y1), int(x2), int(y2)])
                 scores.append(float(confidence))
@@ -76,7 +76,6 @@ class VehicleDetector:
             x1, y1, x2, y2, confidence, class_id = r
             class_name = self.model.names[int(class_id)]
             
-            # Only vehicle classes
             if class_name in self.vehicle_class_names:
                 vehicles.append({
                     'class_name': class_name,
@@ -100,21 +99,21 @@ class VehicleDetector:
         """
         result_frame = frame.copy()
         
-        # If vehicles is a list, assume it contains dictionaries (old format)
+        
         if isinstance(vehicles, list) and len(vehicles) > 0 and isinstance(vehicles[0], dict):
             for vehicle in vehicles:
                 x1, y1, x2, y2 = vehicle['box']
                 class_name = vehicle['class_name']
                 confidence = vehicle['confidence']
                 
-                # Draw box
+                
                 cv2.rectangle(result_frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
                 
-                # Draw text
+                
                 label = f"{class_name} {confidence:.2f}"
                 cv2.putText(result_frame, label, (x1, y1-10), 
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-        # New format (boxes, scores, class_ids)
+        
         elif isinstance(vehicles, tuple) and len(vehicles) == 3:
             boxes, scores, class_ids = vehicles
             for i, box in enumerate(boxes):
@@ -123,10 +122,10 @@ class VehicleDetector:
                 confidence = scores[i]
                 class_name = self.model.names[class_id]
                 
-                # Draw box
+                
                 cv2.rectangle(result_frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
                 
-                # Draw text
+                
                 label = f"{class_name} {confidence:.2f}"
                 cv2.putText(result_frame, label, (x1, y1-10), 
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)

@@ -31,20 +31,20 @@ class VehicleCounterService:
         self.device = device
         self.output_path = output_path
         
-        # Service components
+        
         self.detector = VehicleDetector(model_path, device)
         self.zone_manager = ZoneManager()
         self.tracker = VehicleTracker()
         self.traffic_light_controller = TrafficLightController()
         
-        # Video processing
+        
         self.cap = None
         self.frame_count = 0
         self.start_time = None
         self.fps = 0
         self.processing = False
         
-        # Create output path
+        
         os.makedirs(output_path, exist_ok=True)
     
     def _open_video_capture(self):
@@ -55,7 +55,7 @@ class VehicleCounterService:
             bool: Success status
         """
         if self.video_path is None:
-            self.cap = cv2.VideoCapture(0)  # Default camera
+            self.cap = cv2.VideoCapture(0)  
         else:
             self.cap = cv2.VideoCapture(self.video_path)
         
@@ -76,26 +76,26 @@ class VehicleCounterService:
         Returns:
             bool: Success status
         """
-        # Open video
+        
         if not self._open_video_capture():
             print("Failed to open video or camera.")
             return False
         
-        # Get first frame
+        
         ret, frame = self.cap.read()
         if not ret:
             print("Failed to read video frame.")
             self._close_video_capture()
             return False
         
-        # Zone setup UI
+        
         ui = ZoneSetupUI(self.zone_manager)
         result = ui.setup_from_frame(frame)
         
-        # Close video
+        
         self._close_video_capture()
         
-        # Tracker initialization
+        
         if result:
             self.tracker.initialize_zones(self.zone_manager.zones)
         
@@ -110,7 +110,7 @@ class VehicleCounterService:
             timestamp (float): Timestamp
             zones_data (dict): Zone data
         """
-        # Prepare data
+        
         data = {
             "frame": frame_number,
             "timestamp": timestamp,
@@ -118,7 +118,7 @@ class VehicleCounterService:
             "zones": []
         }
         
-        # Data for each zone
+        
         for zone in self.zone_manager.zones:
             zone_data = {
                 "id": zone.id,
@@ -131,11 +131,11 @@ class VehicleCounterService:
             }
             data["zones"].append(zone_data)
         
-        # Create JSON file name
+        
         timestamp_str = datetime.fromtimestamp(timestamp).strftime("%Y%m%d_%H%M%S")
         filename = f"{self.output_path}/vehicle_data_{timestamp_str}.json"
         
-        # Save data
+        
         with open(filename, "w") as f:
             json.dump(data, f, indent=2)
     
@@ -151,46 +151,46 @@ class VehicleCounterService:
         Returns:
             bool: Process success
         """
-        # Setup zones
+        
         if not self._setup_zones():
             return False
         
-        # Check if zones are setup
+        
         if len(self.zone_manager.zones) == 0:
             print("No zones configured. Process finished.")
             return False
         
-        # Open video
+        
         if not self._open_video_capture():
             print("Failed to open video or camera.")
             return False
         
-        # Video writer setup
+        
         video_writer = None
         if save_video and self.video_path is not None:
-            # Video parameters
+            
             frame_width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
             frame_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
             fps = int(self.cap.get(cv2.CAP_PROP_FPS))
             
-            # Create output file name
+            
             video_filename = os.path.basename(self.video_path)
             output_path = f"{self.output_path}/{os.path.splitext(video_filename)[0]}_output.mp4"
             
-            # Video writer
+            
             fourcc = cv2.VideoWriter_fourcc(*'mp4v')
             video_writer = cv2.VideoWriter(output_path, fourcc, fps, (frame_width, frame_height))
         
-        # Start counting process
+        
         self.processing = True
         self.frame_count = 0
         self.start_time = time.time()
-        last_save_time = time.time()  # Last save time
-        save_interval = 60  # Save interval (seconds)
-        last_statistics_time = time.time()  # Last statistics update time
-        statistics_interval = 5  # Statistics update interval (seconds)
+        last_save_time = time.time()  
+        save_interval = 60  
+        last_statistics_time = time.time()  
+        statistics_interval = 5  
         
-        # Start API server (if specified in constructor)
+        
         try:
             from api import start_api
             api_thread = start_api(vehicle_counter=self, host="0.0.0.0", port=8000)
@@ -198,10 +198,10 @@ class VehicleCounterService:
         except Exception as e:
             print(f"Error starting API server: {e}")
         
-        # Main counting loop
+        
         try:
             while self.cap.isOpened() and self.processing:
-                # Read frame
+                
                 ret, frame = self.cap.read()
                 if not ret:
                     break
@@ -209,14 +209,14 @@ class VehicleCounterService:
                 self.frame_count += 1
                 current_time = time.time()
                 
-                # Detect vehicles
+                
                 detections = self.detector.detect_vehicles(frame)
                 
-                # If detect_vehicles function returns one object, unpack it
+                
                 if isinstance(detections, tuple) and len(detections) == 3:
                     boxes, scores, class_ids = detections
                 else:
-                    # For old version of detector, use detected objects directly
+                    
                     boxes = []
                     scores = []
                     class_ids = []
@@ -229,7 +229,7 @@ class VehicleCounterService:
                                 scores.append(det.get('confidence', 1.0))
                                 class_ids.append(det.get('class_id', 0))
                 
-                # Track vehicles
+                
                 try:
                     tracked_objects, zone_vehicles = self.tracker.track_vehicles(
                         frame, boxes, scores, class_ids, self.zone_manager.zones
@@ -239,79 +239,79 @@ class VehicleCounterService:
                     tracked_objects = []
                     zone_vehicles = {}
                 
-                # Update statistics for each zone
+                
                 if current_time - last_statistics_time >= statistics_interval:
                     for zone in self.zone_manager.zones:
                         zone.update_statistics()
                     last_statistics_time = current_time
                 
-                # Manage traffic lights
+                
                 if self.traffic_light_controller.manage_traffic_congestion(self.zone_manager.zones):
                     print(f"Frame {self.frame_count}: Traffic light status changed.")
                 
-                # Display processed image
+                
                 if display:
-                    # Calculate FPS
+                    
                     elapsed_time = current_time - self.start_time
                     if elapsed_time > 0:
                         self.fps = self.frame_count / elapsed_time
                     
-                    # Draw FPS
+                    
                     cv2.putText(frame, f"FPS: {self.fps:.1f}", (10, 30), 
                                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
                     
-                    # Draw congestion information
+                    
                     congestion_status = self.get_congestion_status()
                     congestion_level = congestion_status.get("level", "Normal")
-                    congestion_color = (0, 255, 0)  # Green - Normal
+                    congestion_color = (0, 255, 0)  
                     
                     if congestion_level == "Medium":
-                        congestion_color = (0, 165, 255)  # Yellow
+                        congestion_color = (0, 165, 255)  
                     elif congestion_level == "High":
-                        congestion_color = (0, 0, 255)  # Red
+                        congestion_color = (0, 0, 255)  
                     
                     cv2.putText(frame, f"Congestion: {congestion_level}", (10, 60), 
                                cv2.FONT_HERSHEY_SIMPLEX, 0.7, congestion_color, 2)
                     
-                    # Draw zones
+                    
                     frame = self.zone_manager.draw_zones(frame)
                     
-                    # Draw current polygon
+                    
                     frame = self.zone_manager.draw_current_polygon(frame)
                     
-                    # Draw vehicles
+                    
                     for obj in tracked_objects:
                         x1, y1, x2, y2 = obj["bbox"]
                         track_id = obj["id"]
                         
-                        # Draw vehicle box
+                        
                         cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 0, 0), 2)
                         
-                        # Draw ID
+                        
                         cv2.putText(frame, f"ID: {track_id}", (x1, y1 - 10), 
                                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
                     
-                    # Draw traffic light status
+                    
                     frame = self.traffic_light_controller.draw_traffic_light_status(frame)
                     
-                    # Show image
+                    
                     cv2.imshow("Vehicle Counter", frame)
                     
-                    # Exit
+                    
                     key = cv2.waitKey(1) & 0xFF
-                    if key == 27:  # ESC
+                    if key == 27:  
                         break
                 
-                # Write video
+                
                 if video_writer is not None:
                     video_writer.write(frame)
                 
-                # Save data
+                
                 if save_data and current_time - last_save_time >= save_interval:
                     self._save_data(self.frame_count, current_time, {"zone_vehicles": zone_vehicles})
                     last_save_time = current_time
                     
-                    # Save statistics
+                    
                     self._save_statistics(current_time)
         
         except KeyboardInterrupt:
@@ -319,7 +319,7 @@ class VehicleCounterService:
         except Exception as e:
             print(f"Process stopped with error: {e}")
         finally:
-            # Cleanup
+            
             self.processing = False
             self._close_video_capture()
             
@@ -328,7 +328,7 @@ class VehicleCounterService:
             
             cv2.destroyAllWindows()
             
-            # Save final data
+            
             if save_data:
                 self._save_data(self.frame_count, time.time(), {})
                 self._save_statistics(time.time())
@@ -344,10 +344,10 @@ class VehicleCounterService:
         Args:
             timestamp (float): Timestamp
         """
-        # Get all zone statistics
+        
         all_stats = self.zone_manager.get_all_statistics()
         
-        # Prepare summary
+        
         summary = {
             "timestamp": timestamp,
             "datetime": datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M:%S"),
@@ -361,11 +361,11 @@ class VehicleCounterService:
             }
         }
         
-        # Create JSON file name
+        
         timestamp_str = datetime.fromtimestamp(timestamp).strftime("%Y%m%d_%H%M%S")
         filename = f"{self.output_path}/statistics_{timestamp_str}.json"
         
-        # Save data
+        
         with open(filename, "w") as f:
             json.dump({"zones": all_stats, "summary": summary}, f, indent=2)
     
@@ -391,15 +391,15 @@ class VehicleCounterService:
         zones_status = []
         total_vehicles = 0
         
-        # Information for each zone
+        
         for zone in self.zone_manager.zones:
             count = zone.get_display_count()
             total_vehicles += count
             
-            # Determine congestion level function
+            
             congestion_level = self._determine_congestion_level(zone)
             
-            # Zone information
+            
             zone_data = {
                 "id": zone.id,
                 "name": zone.name,
@@ -434,10 +434,10 @@ class VehicleCounterService:
         count = zone.get_display_count()
         
         if zone.is_stalled:
-            return "HIGH"  # If vehicles are stalled for a long time, high congestion
+            return "HIGH"  
         
         if zone.is_count_zone():
-            # Based on incoming vehicle count in COUNT zone
+            
             if count < 5:
                 return "LOW"
             elif count < 15:
@@ -445,7 +445,7 @@ class VehicleCounterService:
             else:
                 return "HIGH"
         else:
-            # Based on current vehicle count in SUM zone
+            
             if count < 5:
                 return "LOW"
             elif count < 10:
@@ -459,10 +459,10 @@ class VehicleCounterService:
         if not zone_vehicles:
             return True
             
-        # Check vehicle speed
+        
         for vehicle_id in zone_vehicles:
             vehicle_data = self.tracker.tracked_objects.get(vehicle_id)
-            if vehicle_data and vehicle_data.get("speed", 0) > 2.0:  # speed in km/h
+            if vehicle_data and vehicle_data.get("speed", 0) > 2.0:  
                 return True
                 
         return False 

@@ -1,7 +1,7 @@
 *.pt
 *.h5
 *.zip
-__pycache__/
+**/__pycache__/**
 *.pyc
 *.mov
 *.mp4
@@ -11,7 +11,6 @@ __pycache__/
 *.wmv
 *.webm
 
-# Node modules and large binary files
 node_modules/
 **/node_modules/
 *.node

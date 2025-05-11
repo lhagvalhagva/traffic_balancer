@@ -15,7 +15,7 @@ import uvicorn
 from vehicle_counter_service import VehicleCounterService
 
 
-# API хэрэглэгчийн загварууд үүсгэх
+
 class CountingConfig(BaseModel):
     """
     Тээврийн хэрэгсэл тоолох тохиргоо
@@ -60,7 +60,7 @@ class ZoneCreationRequest(BaseModel):
 
 class TrafficLightRequest(BaseModel):
     direction: str
-    action: str  # "red", "blue", "green"
+    action: str  
     duration: int = None
 
 
@@ -68,13 +68,13 @@ class TrafficLightAutoModeRequest(BaseModel):
     enabled: bool
 
 
-# API сервис үүсгэх
+
 app = FastAPI(
     title="Замын хөдөлгөөн удирдлагын API",
     description="Тээврийн хэрэгсэл тоолох, түгжрэл тодорхойлох ба гэрлэн дохио удирдах API"
 )
 
-# CORS зөвшөөрөх
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -83,7 +83,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Процессийн төлөв
+
 counter_status = CountingStatus(
     is_running=False,
     model_path="yolov8s.pt",
@@ -91,7 +91,7 @@ counter_status = CountingStatus(
     zones=[]
 )
 
-# Сервис инстанс
+
 counter_service = None
 counter_thread = None
 
@@ -134,14 +134,13 @@ def create_zone(request: ZoneCreationRequest):
         raise HTTPException(status_code=503, detail="Систем бэлэн бус байна")
     
     try:
-        # Бүс үүсгэх
+        
         zone = counter_service.zone_manager.create_zone(
             points=request.points,
             zone_type=request.zone_type,
             name=request.name
         )
         
-        # Гэрлэн дохионы чиглэлүүд тохируулах
         zone.traffic_light_directions = request.traffic_light_directions
         
         return {
@@ -166,7 +165,7 @@ def get_zone(zone_id: int):
     if zone is None:
         raise HTTPException(status_code=404, detail=f"Бүс ID={zone_id} олдсонгүй")
     
-    # Машины ID-ний жагсаалтыг string болгох
+    
     vehicle_ids = [str(vehicle_id) for vehicle_id in zone.current_vehicles]
     
     return {
@@ -193,7 +192,7 @@ def get_all_statistics():
     try:
         statistics = counter_service.zone_manager.get_all_statistics()
         
-        # Нийт статистик нэмэх
+        
         total_stats = {
             "total_zones": len(statistics),
             "total_congestion_events": sum(stat["congestion_events"] for stat in statistics),
@@ -202,7 +201,7 @@ def get_all_statistics():
             "timestamp": time.time()
         }
         
-        # Хамгийн их машинтай бүсийг олох
+        
         max_vehicles = 0
         busiest_zone = None
         
@@ -267,11 +266,11 @@ def control_traffic_light(request: TrafficLightRequest):
         raise HTTPException(status_code=404, detail=f"Гэрлэн дохионы чиглэл '{direction}' олдсонгүй")
     
     try:
-        # Хугацаа тохируулах
+        
         if request.duration is not None:
             controller.traffic_lights[direction]["duration"] = request.duration
         
-        # Гэрлийн өнгө солих
+        
         if request.action == "red":
             success = controller.switch_to_red(direction)
         elif request.action == "blue":
@@ -302,7 +301,7 @@ def set_traffic_light_auto_mode(request: TrafficLightAutoModeRequest):
     
     controller = counter_service.traffic_light_controller
     
-    # Автомат горим тохируулах
+    
     controller.auto_mode = request.enabled
     
     return {
@@ -341,7 +340,7 @@ def get_dashboard_data():
     if counter_service is None:
         raise HTTPException(status_code=503, detail="Систем бэлэн бус байна")
     
-    # Бүсүүдийн мэдээлэл
+    
     zones_data = []
     stalled_zones = 0
     total_vehicles = 0
@@ -361,19 +360,19 @@ def get_dashboard_data():
             "type": "COUNT" if zone.is_count_zone() else "SUM"
         })
     
-    # Гэрлэн дохионы мэдээлэл
+    
     lights_data = {}
     red_lights = 0
     
     if counter_service.traffic_light_controller:
         lights_data = counter_service.traffic_light_controller.traffic_lights
         
-        # Улаан гэрлийн тоо
+        
         for light in lights_data.values():
             if light["status"] == "RED":
                 red_lights += 1
     
-    # Хураангуй
+    
     summary = {
         "total_zones": len(zones_data),
         "stalled_zones": stalled_zones,
@@ -398,11 +397,11 @@ async def get_status():
     global counter_status, counter_service
     
     if counter_service and counter_service.processing:
-        # Төлөв шинэчлэх
+        
         counter_status.frame_count = counter_service.frame_count
         counter_status.fps = counter_service.fps
         
-        # Бүсийн мэдээлэл шинэчлэх
+        
         counter_status.zones = []
         for zone in counter_service.zone_manager.zones:
             counter_status.zones.append({
@@ -422,17 +421,17 @@ async def start_counting(config: CountingConfig):
     """
     global counter_status, counter_service, counter_thread
     
-    # Видео зам шалгах
+    
     if config.video_path and not os.path.exists(config.video_path):
         raise HTTPException(status_code=404, detail=f"Видео файл олдсонгүй: {config.video_path}")
     
-    # Өмнөх процесс зогсоох
+    
     if counter_service and counter_service.processing:
         counter_service.stop_counting()
         if counter_thread:
             counter_thread.join(timeout=3.0)
     
-    # Шинэ сервис үүсгэх
+    
     counter_service = VehicleCounterService(
         video_path=config.video_path,
         model_path=config.model_path,
@@ -440,7 +439,7 @@ async def start_counting(config: CountingConfig):
         output_path="data"
     )
     
-    # Төлөв шинэчлэх
+    
     counter_status.is_running = True
     counter_status.video_path = config.video_path
     counter_status.model_path = config.model_path
@@ -448,7 +447,7 @@ async def start_counting(config: CountingConfig):
     counter_status.fps = 0.0
     counter_status.zones = []
     
-    # Тоолох процесс эхлүүлэх
+    
     counter_thread = threading.Thread(
         target=counter_service.start_counting,
         kwargs={
@@ -473,12 +472,12 @@ async def stop_counting():
     if not counter_service or not counter_service.processing:
         raise HTTPException(status_code=400, detail="Тоолох процесс ажиллаж байхгүй байна")
     
-    # Процесс зогсоох
+    
     counter_service.stop_counting()
     if counter_thread:
         counter_thread.join(timeout=3.0)
     
-    # Төлөв шинэчлэх
+    
     counter_status.is_running = False
     
     return {"status": "Процесс зогсоолоо"}
@@ -491,7 +490,7 @@ async def list_videos():
     """
     videos = []
     
-    # Стандарт видео хадгалах зам
+    
     video_dirs = ["data", "videos"]
     
     for video_dir in video_dirs:
@@ -504,7 +503,6 @@ async def list_videos():
                     })
     
     return {"videos": videos}
-
 
 @app.get("/api/congestion/current", response_model=CongestionData)
 async def get_congestion():
@@ -519,7 +517,7 @@ async def get_congestion():
             detail="Тоолох процесс ажиллаж байхгүй байна. Эхлээд процесс эхлүүлнэ үү."
         )
     
-    # Бүс тус бүрийн өгөгдөл
+    
     zone_data = []
     total_vehicles = 0
     
@@ -532,10 +530,9 @@ async def get_congestion():
             "name": zone.name,
             "type": "COUNT" if zone.is_count_zone() else "SUM",
             "count": count,
-            # Түгжрэлийн түвшин тооцоолох
+            
             "congestion_level": get_congestion_level(count, zone.is_count_zone())
         })
-    
     return CongestionData(
         timestamp=counter_service.start_time,
         zone_data=zone_data,
@@ -554,9 +551,9 @@ def get_congestion_level(count, is_count_zone):
     Returns:
         str: Түгжрэлийн түвшин (low, medium, high)
     """
-    # COUNT ба SUM бүсийн хувьд өөр логик хэрэглэнэ
+    
     if is_count_zone:
-        # COUNT бүсийн хувьд (нэвтрэлтийн хурд)
+        
         if count < 10:
             return "low"
         elif count < 20:
@@ -564,7 +561,7 @@ def get_congestion_level(count, is_count_zone):
         else:
             return "high"
     else:
-        # SUM бүсийн хувьд (одоогийн тоо)
+        
         if count < 5:
             return "low"
         elif count < 10:
@@ -573,7 +570,7 @@ def get_congestion_level(count, is_count_zone):
             return "high"
 
 
-# API сервер эхлүүлэх
+
 def start_api(vehicle_counter=None, host="0.0.0.0", port=8000):
     """
     API сервер эхлүүлэх
@@ -586,7 +583,6 @@ def start_api(vehicle_counter=None, host="0.0.0.0", port=8000):
     global counter_service
     counter_service = vehicle_counter
     
-    # Тусдаа thread дээр ажиллуулах
     api_thread = threading.Thread(
         target=lambda: uvicorn.run(app, host=host, port=port)
     )
@@ -596,6 +592,5 @@ def start_api(vehicle_counter=None, host="0.0.0.0", port=8000):
     return api_thread
 
 
-# API модуль дангаараа ажиллах
 if __name__ == "__main__":
     start_api() 

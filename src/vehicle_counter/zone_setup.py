@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from zone_manager import Zone
+import os
 
 class ZoneSetupUI:
     """
@@ -358,51 +359,141 @@ class ZoneSetupUI:
         Returns:
             bool: Whether setup was completed
         """
-        self.thumbnail = frame.copy()
-        self.original_thumbnail = frame.copy()
-        
-        self.setup_mouse_callback()
-        cv2.imshow(self.window_name, self.thumbnail)
-        
-        print("Zone creation instructions:")
-        print("- Click left button to select zone points")
-        print("- Click right button to finish the zone")
-        print("- Click COUNT or SUM button to select zone type")
-        print("- Select multiple directions as needed")
-        print("- Press Enter to finish zone configuration")
-        print("- Press 'c' to clear zone points")
-        
-        zone_mode = True
-        while zone_mode:
-            # Update screen
-            display_img = self.original_thumbnail.copy()
+        # Хуучин горим
+        if not os.environ.get('HEADLESS', '0') == '1':
+            self.thumbnail = frame.copy()
+            self.original_thumbnail = frame.copy()
             
-            # Draw current polygon
-            display_img = self.zone_manager.draw_current_polygon(display_img)
+            self.setup_mouse_callback()
+            cv2.imshow(self.window_name, self.thumbnail)
             
-            # Draw zones
-            display_img = self.zone_manager.draw_zones(display_img)
+            print("Zone creation instructions:")
+            print("- Click left button to select zone points")
+            print("- Click right button to finish the zone")
+            print("- Click COUNT or SUM button to select zone type")
+            print("- Select multiple directions as needed")
+            print("- Press Enter to finish zone configuration")
+            print("- Press 'c' to clear zone points")
             
-            # Update screen
-            if not (self.selecting_type or self.selecting_direction or self.selecting_lights):
-                self.thumbnail = display_img
-                cv2.imshow(self.window_name, self.thumbnail)
+            zone_mode = True
+            while zone_mode:
+                # Update screen
+                display_img = self.original_thumbnail.copy()
+                
+                # Draw current polygon
+                display_img = self.zone_manager.draw_current_polygon(display_img)
+                
+                # Draw zones
+                display_img = self.zone_manager.draw_zones(display_img)
+                
+                # Update screen
+                if not (self.selecting_type or self.selecting_direction or self.selecting_lights):
+                    self.thumbnail = display_img
+                    cv2.imshow(self.window_name, self.thumbnail)
+                
+                # Wait for user input
+                key = cv2.waitKey(1)
+                if key == 13:  # Enter key
+                    if self.zone_manager.is_current_polygon_valid():
+                        print("Unfinished zone exists. Please finish the zone first.")
+                    else:
+                        print("Zone configuration completed.")
+                        zone_mode = False
+                elif key == ord('q'):
+                    print("Cancelled.")
+                    cv2.destroyWindow(self.window_name)
+                    return False
+                elif key == ord('c'):
+                    self.zone_manager.reset_current_polygon()
+                    print("Current polygon cleared.")
             
-            # Wait for user input
-            key = cv2.waitKey(1)
-            if key == 13:  # Enter key
-                if self.zone_manager.is_current_polygon_valid():
-                    print("Unfinished zone exists. Please finish the zone first.")
-                else:
-                    print("Zone configuration completed.")
-                    zone_mode = False
-            elif key == ord('q'):
-                print("Cancelled.")
-                cv2.destroyWindow(self.window_name)
-                return False
-            elif key == ord('c'):
+            cv2.destroyWindow(self.window_name)
+            return True
+        else:
+            # Headless горим - автоматаар зоны тохиргоо хийх
+            print("Running in headless mode, creating predefined zones automatically")
+            
+            # Зургийн хэмжээ авах
+            height, width = frame.shape[:2]
+            
+            # Дөрвөн зоны тохиргоо
+            zones_config = [
+                {
+                    "name": "Зүүн зам",
+                    "points": [
+                        (int(width * 0.05), int(height * 0.4)),
+                        (int(width * 0.3), int(height * 0.4)), 
+                        (int(width * 0.3), int(height * 0.6)),
+                        (int(width * 0.05), int(height * 0.6))
+                    ],
+                    "type": Zone.ZONE_TYPE_COUNT,
+                    "directions": ["West_Straight", "West_Right"]
+                },
+                {
+                    "name": "Баруун зам",
+                    "points": [
+                        (int(width * 0.7), int(height * 0.4)),
+                        (int(width * 0.95), int(height * 0.4)),
+                        (int(width * 0.95), int(height * 0.6)),
+                        (int(width * 0.7), int(height * 0.6))
+                    ],
+                    "type": Zone.ZONE_TYPE_COUNT,
+                    "directions": ["East_Straight", "East_Left"]
+                },
+                {
+                    "name": "Дээд зам",
+                    "points": [
+                        (int(width * 0.4), int(height * 0.05)),
+                        (int(width * 0.6), int(height * 0.05)),
+                        (int(width * 0.6), int(height * 0.3)),
+                        (int(width * 0.4), int(height * 0.3))
+                    ],
+                    "type": Zone.ZONE_TYPE_COUNT,
+                    "directions": ["North_Straight", "North_Right"]
+                },
+                {
+                    "name": "Доод зам",
+                    "points": [
+                        (int(width * 0.4), int(height * 0.7)),
+                        (int(width * 0.6), int(height * 0.7)),
+                        (int(width * 0.6), int(height * 0.95)),
+                        (int(width * 0.4), int(height * 0.95))
+                    ],
+                    "type": Zone.ZONE_TYPE_COUNT,
+                    "directions": ["South_Straight", "South_Left"]
+                },
+                {
+                    "name": "Уулзварын төв",
+                    "points": [
+                        (int(width * 0.3), int(height * 0.3)),
+                        (int(width * 0.7), int(height * 0.3)),
+                        (int(width * 0.7), int(height * 0.7)),
+                        (int(width * 0.3), int(height * 0.7))
+                    ],
+                    "type": Zone.ZONE_TYPE_SUM,
+                    "directions": ["West_Straight", "East_Straight", "North_Straight", "South_Straight"]
+                }
+            ]
+            
+            # Зонуудыг бүгдийг давтан үүсгэх
+            created_zones = 0
+            for zone_config in zones_config:
                 self.zone_manager.reset_current_polygon()
-                print("Current polygon cleared.")
-        
-        cv2.destroyWindow(self.window_name)
-        return True
+                
+                # Зон цэгүүдийг нэмэх
+                for point in zone_config["points"]:
+                    self.zone_manager.add_point_to_current_polygon(*point)
+                
+                # Зон үүсгэх
+                zone = self.zone_manager.create_zone(
+                    self.zone_manager.current_polygon,
+                    zone_config["type"]
+                )
+                
+                # Зоны нэр болон чиглэлүүдийг тохируулах
+                zone.name = zone_config["name"]
+                zone.traffic_light_directions = zone_config["directions"]
+                created_zones += 1
+            
+            print(f"Created {created_zones} predefined zones automatically")
+            return True

@@ -3,6 +3,7 @@ import time
 import os
 import json
 from datetime import datetime
+import numpy as np
 
 from vehicle_detector import VehicleDetector
 from zone_manager import Zone, ZoneManager
@@ -16,7 +17,7 @@ class VehicleCounterService:
     Main service for vehicle counting
     """
     
-    def __init__(self, video_path=None, model_path="yolov8s.pt", device="cpu", output_path="data"):
+    def __init__(self, video_path=None, model_path="yolov8s.pt", device="cpu", output_path="data", custom_zones=None):
         """
         Initialize vehicle counting service
         
@@ -25,18 +26,18 @@ class VehicleCounterService:
             model_path (str): YOLO model path
             device (str): Device to use (cpu, cuda, mps)
             output_path (str): Output data path
+            custom_zones (list): Custom zones provided by user
         """
         self.video_path = video_path
         self.model_path = model_path
         self.device = device
         self.output_path = output_path
-        
+        self.custom_zones = custom_zones
         
         self.detector = VehicleDetector(model_path, device)
         self.zone_manager = ZoneManager()
         self.tracker = VehicleTracker()
         self.traffic_light_controller = TrafficLightController()
-        
         
         self.cap = None
         self.frame_count = 0
@@ -44,22 +45,52 @@ class VehicleCounterService:
         self.fps = 0
         self.processing = False
         
-        
         os.makedirs(output_path, exist_ok=True)
     
     def _open_video_capture(self):
         """
-        Open video capture or camera
+        Open video capture from video path or camera
         
         Returns:
-            bool: Success status
+            bool: Success
         """
-        if self.video_path is None:
-            self.cap = cv2.VideoCapture(0)  
+        # If video path is provided, use it
+        if self.video_path:
+            # Try to find the file using absolute or relative path
+            if os.path.isabs(self.video_path):
+                # Absolute path
+                video_path = self.video_path
+            else:
+                # Check if file exists in current directory
+                if os.path.exists(self.video_path):
+                    video_path = self.video_path
+                else:
+                    # Try to find in project root
+                    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                    video_path = os.path.join(project_root, 'vehicle_counter', self.video_path)
+                    
+                    # If still not found, check if file exists in current working directory
+                    if not os.path.exists(video_path):
+                        video_path = os.path.join(os.getcwd(), self.video_path)
+                    
+                    # Final fallback - use as is
+                    if not os.path.exists(video_path):
+                        print(f"Warning: Video file not found at expected paths, using as is: {self.video_path}")
+                        video_path = self.video_path
+            
+            print(f"Opening video capture from: {video_path}")
+            self.cap = cv2.VideoCapture(video_path)
         else:
-            self.cap = cv2.VideoCapture(self.video_path)
+            # Use camera
+            print("Opening camera capture")
+            self.cap = cv2.VideoCapture(0)
         
-        return self.cap.isOpened()
+        # Check if video capture is opened
+        if not self.cap.isOpened():
+            print("Error: Failed to open video capture")
+            return False
+            
+        return True
     
     def _close_video_capture(self):
         """
@@ -81,25 +112,83 @@ class VehicleCounterService:
             print("Failed to open video or camera.")
             return False
         
-        
         ret, frame = self.cap.read()
         if not ret:
             print("Failed to read video frame.")
             self._close_video_capture()
             return False
         
-        
-        ui = ZoneSetupUI(self.zone_manager)
-        result = ui.setup_from_frame(frame)
-        
+        # Check if user provided custom zones
+        if self.custom_zones and len(self.custom_zones) > 0:
+            print(f"Using {len(self.custom_zones)} custom zones provided by user")
+            self._create_custom_zones(frame)
+            result = True
+        else:
+            # Use automatic zone setup
+            ui = ZoneSetupUI(self.zone_manager)
+            result = ui.setup_from_frame(frame)
         
         self._close_video_capture()
-        
         
         if result:
             self.tracker.initialize_zones(self.zone_manager.zones)
         
         return result
+    
+    def _create_custom_zones(self, frame):
+        """
+        Create zones from user-provided custom zones
+        
+        Args:
+            frame (numpy.ndarray): Video frame
+        """
+        height, width = frame.shape[:2]
+        
+        for i, zone_data in enumerate(self.custom_zones):
+            # Reset current polygon
+            self.zone_manager.reset_current_polygon()
+            
+            # Get zone points
+            points = zone_data.get('points', [])
+            if len(points) < 3:
+                print(f"Skipping zone {i+1} with insufficient points")
+                continue
+                
+            # Add points to polygon
+            for point in points:
+                x = int(point.get('x', 0))
+                y = int(point.get('y', 0))
+                self.zone_manager.add_point_to_current_polygon(x, y)
+            
+            # Determine zone type
+            zone_type = zone_data.get('type', 'COUNT')
+            if zone_type == 'COUNT':
+                zone_type_val = Zone.ZONE_TYPE_COUNT
+            elif zone_type == 'SUM':
+                zone_type_val = Zone.ZONE_TYPE_SUM
+            else:
+                zone_type_val = Zone.ZONE_TYPE_COUNT
+            
+            # Create zone
+            zone = self.zone_manager.create_zone(
+                self.zone_manager.current_polygon,
+                zone_type_val
+            )
+            
+            # Set zone name
+            zone_name = zone_data.get('name', f"Zone {i+1}")
+            zone.name = zone_name
+            
+            # Set traffic light directions (default to East/West)
+            # This could be extended to allow user selection of directions
+            if zone_type_val == Zone.ZONE_TYPE_COUNT:
+                zone.traffic_light_directions = ["East_Straight", "West_Straight"]
+            else:
+                zone.traffic_light_directions = ["East_Straight", "West_Straight", "North_Straight", "South_Straight"]
+                
+            print(f"Created custom zone: {zone_name} of type {zone_type}")
+        
+        print(f"Created {len(self.zone_manager.zones)} custom zones")
     
     def _save_data(self, frame_number, timestamp, zones_data):
         """

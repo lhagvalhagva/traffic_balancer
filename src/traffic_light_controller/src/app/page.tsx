@@ -7,6 +7,7 @@ import { useAuth } from '@/lib/AuthContext';
 import dynamic from 'next/dynamic';
 import TrafficLight from '@/components/TrafficLight';
 import { Tab } from '@/components/ui/Tab';
+import Image from 'next/image';
 
 const MapComponent = dynamic(() => import('@/components/Map'), { ssr: false });
 
@@ -18,6 +19,14 @@ interface CrossroadItem {
 interface DistrictItem {
   id: number;
   name: string;
+}
+
+interface CameraItem {
+  id: number;
+  name: string;
+  status: 'online' | 'offline';
+  streamUrl: string;
+  thumbnail: string;
 }
 
 // Районы и перекрестки - данные для примера
@@ -66,6 +75,31 @@ const crossroads: Record<number, CrossroadItem[]> = {
   ]
 };
 
+// Пример камер для просмотра
+const cameras: CameraItem[] = [
+  {
+    id: 1,
+    name: 'Баруун 4 замын уулзвар',
+    status: 'online',
+    streamUrl: '/videos/road1.mp4',
+    thumbnail: 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8Y2l0eSUyMHN0cmVldCUyMGNyb3NzaW5nfGVufDB8fDB8fA%3D%3D&w=1000&q=80'
+  },
+  {
+    id: 2,
+    name: 'Энх тайвны өргөн чөлөө',
+    status: 'online',
+    streamUrl: '/videos/road2.mp4',
+    thumbnail: 'https://media.istockphoto.com/id/675176928/photo/shanghai-elevated-road-junction-and-interchange-overpass-at-night.jpg?s=612x612&w=0&k=20&c=OTENsfMXJ1NKDqoXegmPYFvp8yd9j9MvcH_6RgRYYQQ='
+  },
+  {
+    id: 3,
+    name: 'Их тойруу',
+    status: 'online',
+    streamUrl: '/videos/road3.mp4', 
+    thumbnail: 'https://images.pexels.com/photos/358764/pexels-photo-358764.jpeg?cs=srgb&dl=pexels-pixabay-358764.jpg&fm=jpg'
+  }
+];
+
 export default function Home() {
   const { user } = useAuth();
   const router = useRouter();
@@ -77,6 +111,8 @@ export default function Home() {
   // Выбранные значения
   const [selectedDistrict, setSelectedDistrict] = useState<number>(1); // Сүхбаатар по умолчанию
   const [selectedCrossroad, setSelectedCrossroad] = useState<number>(101); // Баруун 4 замын уулзвар по умолчанию
+  const [selectedCamera, setSelectedCamera] = useState<number>(1);
+  const [videoPlaying, setVideoPlaying] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -106,6 +142,15 @@ export default function Home() {
     setSelectedCrossroad(crossroadId);
   };
 
+  const handleCameraSelect = (cameraId: number) => {
+    setSelectedCamera(cameraId);
+    setVideoPlaying(false);
+  };
+
+  const handlePlayVideo = () => {
+    setVideoPlaying(true);
+  };
+
   const visibleLights = selectedLight
     ? trafficLights.filter(light => light.id === selectedLight)
     : trafficLights;
@@ -113,6 +158,7 @@ export default function Home() {
   // Находим выбранный район и перекресток
   const selectedDistrictObj = districts.find(d => d.id === selectedDistrict);
   const selectedCrossroadObj = crossroads[selectedDistrict]?.find(c => c.id === selectedCrossroad);
+  const selectedCameraObj = cameras.find(c => c.id === selectedCamera);
 
   return (
     <div className="p-4">
@@ -140,8 +186,59 @@ export default function Home() {
           )}
           
           {activeTab === 'camera' && (
-            <div className="h-full bg-gray-100 rounded-lg p-8 flex items-center justify-center">
-              <p className="text-gray-500">Камерын хяналтын мэдээлэл энд харагдана</p>
+            <div className="h-full bg-white rounded-lg p-4 flex flex-col">
+              <div className="relative h-96 bg-black rounded-lg overflow-hidden mb-4">
+                {videoPlaying ? (
+                  <video 
+                    src={selectedCameraObj?.streamUrl} 
+                    className="w-full h-full object-contain"
+                    controls
+                    autoPlay
+                  />
+                ) : (
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    <img 
+                      src={selectedCameraObj?.thumbnail} 
+                      alt={selectedCameraObj?.name}
+                      className="w-full h-full object-cover opacity-70"
+                    />
+                    <button 
+                      className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-colors"
+                      onClick={handlePlayVideo}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
+              </div>
+              
+              <div className="grid grid-cols-3 gap-4">
+                {cameras.map(camera => (
+                  <div 
+                    key={camera.id}
+                    className={`relative cursor-pointer rounded-lg overflow-hidden ${
+                      selectedCamera === camera.id ? 'ring-2 ring-blue-500' : ''
+                    }`}
+                    onClick={() => handleCameraSelect(camera.id)}
+                  >
+                    <img 
+                      src={camera.thumbnail} 
+                      alt={camera.name}
+                      className="w-full h-32 object-cover"
+                    />
+                    <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 p-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-white text-sm truncate">{camera.name}</span>
+                        <span className={`ml-2 w-2 h-2 rounded-full ${
+                          camera.status === 'online' ? 'bg-green-500' : 'bg-red-500'
+                        }`}></span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>

@@ -28,10 +28,9 @@ export default function RootLayout({
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {/* <SocketProvider> */}
-        <Header isConnected={true} /> {/* Optional: Pass static value or use context */}
+        <Header isConnected={true} /> 
         <main className="container mx-auto">
           <AuthProvider>
-
             {children}
           </AuthProvider>
         </main>

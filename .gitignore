@@ -1,0 +1,12 @@
+*.pt
+*.h5
+*.zip
+__pycache__/
+*.pyc
+*.mov
+*.mp4
+*.avi
+*.mkv
+*.flv
+*.wmv
+*.webm

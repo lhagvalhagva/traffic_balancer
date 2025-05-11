@@ -170,6 +170,7 @@ class TrafficLightController:
             return False
         
         
+        # if current_time - zone.last_update_time < 0.0:
         if current_time - zone.last_update_time < 10.0:
             return False
             
@@ -193,6 +194,7 @@ class TrafficLightController:
         current_time = time.time()
         
         
+        # if current_time - zone.last_update_time < 0.0:
         if current_time - zone.last_update_time < 10.0:
             return False
             

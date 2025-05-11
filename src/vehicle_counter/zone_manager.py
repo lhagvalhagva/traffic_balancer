@@ -161,10 +161,8 @@ class Zone:
                     "vehicle_count": len(self.current_vehicles)
                 })
         else:
-            # Одоогийн хугацаа
             current_time = time.time()
             
-            # Хөдөлгөөнгүй байсан хугацааг тооцоолох (секунд)
             stall_duration = current_time - self.last_update_time
             
             # Хөдөлгөөнгүй байх хугацаа 10 секундээс их бол түгжрэл гэж үзэх

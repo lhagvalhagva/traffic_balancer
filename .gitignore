@@ -10,3 +10,9 @@ __pycache__/
 *.flv
 *.wmv
 *.webm
+
+# Node modules and large binary files
+node_modules/
+**/node_modules/
+*.node
+src/traffic_light_controller/node_modules/

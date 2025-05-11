@@ -87,10 +87,10 @@ def draw_zone(event, x, y, flags, param):
                 
                 zones.append({
                     "id": current_zone_id,
-                    "points": current_polygon.copy(),  # Store all polygon points
+                    "points": current_polygon.copy(),
                     "name": f"Zone {current_zone_id}",
                     "type": current_type,
-                    "polygon": poly  # Store Shapely polygon for later use
+                    "polygon": poly
                 })
                 
                 print(f"Zone {current_zone_id} added with type {current_type}")

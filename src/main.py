@@ -6,21 +6,21 @@ import argparse
 import subprocess
 from pathlib import Path
 
-# Зам үүсгэх
+# Create paths
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
 os.makedirs(DATA_DIR, exist_ok=True)
 
 def start_vehicle_counter(video_path=None, display=True):
     """
-    Тээврийн хэрэгсэл тоолох модулийг эхлүүлэх
+    Start the vehicle counting module
     
     Args:
-        video_path: Видео бичлэгийн зам
-        display: Видеог харуулах эсэх
+        video_path: Video file path
+        display: Whether to display the video
     """
-    from vehicle_counter.main import VehicleCounterService
-    print("Тээврийн хэрэгсэл тоолох модуль эхэллээ...")
+    from vehicle_counter.vehicle_counter_service import VehicleCounterService
+    print("Vehicle counting module started...")
     
     service = VehicleCounterService(
         video_path=video_path,
@@ -30,29 +30,29 @@ def start_vehicle_counter(video_path=None, display=True):
 
 def start_traffic_analyzer(host="0.0.0.0", port=8000):
     """
-    Түгжрэлийн түвшин тодорхойлох API серверийг эхлүүлэх
+    Start the traffic congestion analysis API server
     
     Args:
-        host: Хост хаяг
-        port: Порт
+        host: Host address
+        port: Port
     """
     from traffic_analyzer.api import start_api
-    print(f"Түгжрэлийн шинжээч API серверийг {host}:{port} хаягт эхлүүлж байна...")
+    print(f"Starting traffic analyzer API server at {host}:{port}...")
     
     start_api(host=host, port=port)
 
 def start_traffic_light_controller(port=3000):
     """
-    Гэрлэн дохио удирдлагын серверийг эхлүүлэх
+    Start the traffic light controller server
     
     Args:
-        port: Порт
+        port: Port
     """
     controller_dir = BASE_DIR / "src" / "traffic_light_controller"
     
-    print(f"Гэрлэн дохио удирдлагын сервер {port} портод эхлүүлж байна...")
+    print(f"Starting traffic light controller server on port {port}...")
     
-    # Node.js сервер эхлүүлэх
+    # Start Node.js server
     process = subprocess.Popen(
         ["node", "app.js"],
         cwd=controller_dir,
@@ -61,23 +61,23 @@ def start_traffic_light_controller(port=3000):
         text=True
     )
     
-    # Бүртгэлийг хянах
+    # Monitor logs
     for line in iter(process.stdout.readline, ""):
         print(f"[Traffic Light Controller] {line.strip()}")
 
 def main():
     """
-    Үндсэн програм
+    Main program
     """
-    parser = argparse.ArgumentParser(description="Замын хөдөлгөөний хяналт, удирдлагын систем")
-    parser.add_argument("--video", type=str, help="Видео файлын зам")
-    parser.add_argument("--no-display", action="store_true", help="Видеог харуулахгүй")
-    parser.add_argument("--api-port", type=int, default=8000, help="Түгжрэлийн API порт")
-    parser.add_argument("--controller-port", type=int, default=3000, help="Гэрлэн дохио удирдлагын порт")
+    parser = argparse.ArgumentParser(description="Traffic monitoring and control system")
+    parser.add_argument("--video", type=str, help="Video file path")
+    parser.add_argument("--no-display", action="store_true", help="Do not display video")
+    parser.add_argument("--api-port", type=int, default=8000, help="Traffic analyzer API port")
+    parser.add_argument("--controller-port", type=int, default=3000, help="Traffic light controller port")
     args = parser.parse_args()
     
     try:
-        # Модулиудыг тус тусдаа thread-д эхлүүлэх
+        # Start modules in separate threads
         counter_thread = threading.Thread(
             target=start_vehicle_counter,
             args=(args.video, not args.no_display)
@@ -93,26 +93,24 @@ def main():
             args=(args.controller_port,)
         )
         
-        # Thread-уудыг эхлүүлэх
         counter_thread.start()
-        time.sleep(2)  # Тоологч эхэлсний дараа шинжээчийг эхлүүлэх
+        time.sleep(2) 
         
         analyzer_thread.start()
-        time.sleep(2)  # API эхэлсний дараа удирдлагыг эхлүүлэх
+        time.sleep(2) 
         
         controller_thread.start()
         
-        # Үндсэн thread-д хянах
         while True:
             time.sleep(1)
             if not counter_thread.is_alive() and not analyzer_thread.is_alive() and not controller_thread.is_alive():
-                print("Бүх модулиуд зогссон. Програм дууссан.")
+                print("All modules stopped. Program finished.")
                 break
     
     except KeyboardInterrupt:
-        print("\nПрограм хэрэглэгчийн хүсэлтээр зогссон.")
+        print("\nProgram stopped by user request.")
     except Exception as e:
-        print(f"Алдаа гарлаа: {e}")
+        print(f"Error occurred: {e}")
 
 if __name__ == "__main__":
     main() 

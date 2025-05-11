@@ -1,104 +1,69 @@
-# Замын Хөдөлгөөн Хянах ба Удирдах Систем
+# Traffic Monitoring System
 
-Энэхүү систем нь автозамын түгжрэлийг тодорхойлж, гэрлэн дохионы удирдлагаар дамжуулан хөдөлгөөнийг зохицуулах зориулалттай. Систем нь камерын тусламжтайгаар машин тоолох, түгжрэлийн түвшин тогтоох, гэрлэн дохио удирдах гурван үндсэн модулиас бүрдэнэ.
+A system that monitors traffic flow using YOLOv8, detects congestion, and controls traffic lights.
 
-## Системийн архитектур
+## Overview
 
-Систем нь дараах 3 үндсэн модулиас бүрдэнэ:
+The system detects and counts vehicles from camera or video input, analyzes data for congestion, and can automatically adjust traffic light timing to prevent congestion.
 
-1. **Тээврийн хэрэгсэл тоолох модуль (Python)**: 
-   - Камерын дүрс боловсруулалт хийж тээврийн хэрэгсэл илрүүлэх
-   - ROI (Region of Interest) буюу тоолох бүсийг тодорхойлох
-   - Тээврийн хэрэгслийн чиглэл болон тоог тодорхойлох
+## Installation
 
-2. **Түгжрэлийн түвшин шинжлэх модуль (Python)**: 
-   - Тоологдсон машины өгөгдөлд үндэслэн түгжрэлийн түвшинг тодорхойлох
-   - RestAPI хэлбэрээр мэдээллийг гадагш дамжуулах
-   - Статистик мэдээлэл хадгалах, боловсруулах
+Follow these steps to run the system:
 
-3. **Гэрлэн дохио удирдах модуль (Node.js)**:
-   - Гэрлэн дохионы хугацааг авто/гар аргаар удирдах
-   - Түгжрэлийн түвшингээс хамаарч гэрлэн дохионы хугацааг автоматаар тохируулах
-   - Хяналтын вэб интерфэйс
+1. Install Python 3.8+
+2. Install required packages:
 
-## Шаардлагууд
-
-### Python модуль
-- Python 3.8+
-- OpenCV
-- YOLO (YOLOv8)
-- DeepSort
-- FastAPI
-- Pandas, NumPy
-- Асаалттай камер эсвэл видео файл
-
-### Node.js модуль
-- Node.js 14+
-- Express
-- Socket.IO
-- MQTT (тэмдэг дамжуулах)
-
-## Суулгах зааварчилгаа
-
-1. Репозиторийг клонлох:
-```
-git clone https://github.com/your-repo/traffic-control-system.git
-cd traffic-control-system
-```
-
-2. Python хамаарлуудыг суулгах:
-```
+```bash
 pip install -r requirements.txt
 ```
 
-3. Node.js хамаарлуудыг суулгах:
-```
-npm install
-```
+## Running
 
-4. YOLO загвар татах:
-```
-# yolov8n.pt автоматаар татагдана
+Run the system directly:
+
+```bash
+python run.py
 ```
 
-## Ажиллуулах зааварчилгаа
+Run with a video file:
 
-### Бүх модулийг хамт ажиллуулах
-```
-python src/main.py --video video.mp4
-```
-
-### Параметрүүд
-```
---video        Видео файлын зам (заагаагүй бол камераас авна)
---no-display   Видеог харуулахгүй байх (сервер горимд)
---api-port     Түгжрэлийн API-н порт (үндсэн: 8000)
---controller-port  Гэрлэн дохио удирдлагын порт (үндсэн: 3000)
+```bash
+python run.py --video viiddeo.mov
 ```
 
-### Хяналтын самбар
-Гэрлэн дохионы хяналтын самбарт хандахын тулд вэб хөтөч дээр:
+Save processed video:
+
+```bash
+python run.py --video viiddeo.mov --save-video
 ```
-http://localhost:3000
+
+See all available options:
+
+```bash
+python run.py --help
 ```
 
-## API лавлагаа
+## Usage
 
-### Түгжрэлийн API
-- `GET /api/congestion/current` - Одоогийн түгжрэлийн түвшин авах
-- `GET /api/analysis/latest` - Хамгийн сүүлийн шинжилгээний үр дүн авах
-- `GET /api/analysis/history` - Шинжилгээний түүх авах
+1. When started, a zone setup interface will appear.
+2. Click left mouse button to select zone points.
+3. Click right mouse button to finish a zone.
+4. Select zone type: COUNT or SUM.
+5. Press Enter to finish zone configuration.
+6. Press 'c' to clear zone points.
 
-### Гэрлэн дохио удирдлагын API
-- `GET /api/lights` - Бүх гэрлэн дохионы мэдээлэл авах
-- `POST /api/lights/control` - Гэрлэн дохио удирдах
+## API
 
-## Хөгжүүлэгчид
+The system provides an API interface. View the API documentation at:
 
-- Ө.Баяраа - Тээврийн хэрэгсэл тоолох модуль
-- Л.Чинзориг - Түгжрэлийн түвшин шинжлэх модуль
-- Д.Бат-Эрдэнэ - Гэрлэн дохио удирдах модуль
+```
+http://localhost:8000/docs
+```
 
-## Лиценз
+## License
 
-MIT # traffic_balancer
+MIT
+
+## Authors
+
+Developed as part of a bachelor's thesis. SEZIS, MHTS.

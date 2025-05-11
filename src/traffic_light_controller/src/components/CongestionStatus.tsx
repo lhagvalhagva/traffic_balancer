@@ -80,7 +80,6 @@ export const CongestionStatus: React.FC<CongestionStatusProps> = ({
     }
   };
   
-  // Анх компонент ачаалагдахад болон 10 секунд тутамд дахин авах
   useEffect(() => {
     fetchCongestionData();
     

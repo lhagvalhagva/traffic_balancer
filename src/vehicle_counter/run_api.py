@@ -1,6 +1,6 @@
 import argparse
 import logging
-from .api import start_api_server
+from api import start_api_server
 
 # Логгер тохируулах
 logging.basicConfig(

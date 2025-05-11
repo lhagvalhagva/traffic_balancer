@@ -1,0 +1,18 @@
+*.pt
+*.h5
+*.zip
+__pycache__/
+*.pyc
+*.mov
+*.mp4
+*.avi
+*.mkv
+*.flv
+*.wmv
+*.webm
+
+# Node modules and large binary files
+node_modules/
+**/node_modules/
+*.node
+src/traffic_light_controller/node_modules/
